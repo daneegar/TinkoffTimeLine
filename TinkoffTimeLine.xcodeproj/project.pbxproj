@@ -8,22 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		928D55DB21E1A8DA005EB326 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55DA21E1A8DA005EB326 /* AppDelegate.swift */; };
-		928D55DD21E1A8DA005EB326 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55DC21E1A8DA005EB326 /* ViewController.swift */; };
+		928D55DD21E1A8DA005EB326 /* ArticleVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55DC21E1A8DA005EB326 /* ArticleVC.swift */; };
 		928D55E021E1A8DA005EB326 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 928D55DE21E1A8DA005EB326 /* Main.storyboard */; };
 		928D55E321E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 928D55E121E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodeld */; };
 		928D55E521E1A8DC005EB326 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 928D55E421E1A8DC005EB326 /* Assets.xcassets */; };
 		928D55E821E1A8DC005EB326 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 928D55E621E1A8DC005EB326 /* LaunchScreen.storyboard */; };
+		928D55F021E1B647005EB326 /* TimeLineTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55EF21E1B647005EB326 /* TimeLineTableVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		928D55D721E1A8DA005EB326 /* TinkoffTimeLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinkoffTimeLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		928D55DA21E1A8DA005EB326 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		928D55DC21E1A8DA005EB326 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		928D55DC21E1A8DA005EB326 /* ArticleVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleVC.swift; sourceTree = "<group>"; };
 		928D55DF21E1A8DA005EB326 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		928D55E221E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TinkoffTimeLine.xcdatamodel; sourceTree = "<group>"; };
 		928D55E421E1A8DC005EB326 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		928D55E721E1A8DC005EB326 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		928D55E921E1A8DC005EB326 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		928D55EF21E1B647005EB326 /* TimeLineTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineTableVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +58,49 @@
 		928D55D921E1A8DA005EB326 /* TinkoffTimeLine */ = {
 			isa = PBXGroup;
 			children = (
-				928D55DA21E1A8DA005EB326 /* AppDelegate.swift */,
-				928D55DC21E1A8DA005EB326 /* ViewController.swift */,
-				928D55DE21E1A8DA005EB326 /* Main.storyboard */,
-				928D55E421E1A8DC005EB326 /* Assets.xcassets */,
-				928D55E621E1A8DC005EB326 /* LaunchScreen.storyboard */,
+				928D55F421E1B712005EB326 /* View */,
+				928D55F321E1B6EE005EB326 /* Handlers */,
+				928D55F221E1B6D6005EB326 /* API */,
+				928D55F121E1B64D005EB326 /* ViewControllers */,
 				928D55E921E1A8DC005EB326 /* Info.plist */,
 				928D55E121E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodeld */,
 			);
 			path = TinkoffTimeLine;
+			sourceTree = "<group>";
+		};
+		928D55F121E1B64D005EB326 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				928D55DC21E1A8DA005EB326 /* ArticleVC.swift */,
+				928D55EF21E1B647005EB326 /* TimeLineTableVC.swift */,
+			);
+			name = ViewControllers;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		928D55F221E1B6D6005EB326 /* API */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		928D55F321E1B6EE005EB326 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				928D55DA21E1A8DA005EB326 /* AppDelegate.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		928D55F421E1B712005EB326 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				928D55E621E1A8DC005EB326 /* LaunchScreen.storyboard */,
+				928D55E421E1A8DC005EB326 /* Assets.xcassets */,
+				928D55DE21E1A8DA005EB326 /* Main.storyboard */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,8 +174,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				928D55DD21E1A8DA005EB326 /* ViewController.swift in Sources */,
+				928D55DD21E1A8DA005EB326 /* ArticleVC.swift in Sources */,
 				928D55E321E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodeld in Sources */,
+				928D55F021E1B647005EB326 /* TimeLineTableVC.swift in Sources */,
 				928D55DB21E1A8DA005EB326 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
