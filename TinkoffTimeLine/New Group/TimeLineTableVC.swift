@@ -12,12 +12,11 @@ class TimeLineTableVC: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+                let apiHandler = ApiHandler()
+        apiHandler.getList(with: nil, and: nil) { (data, response, error) in
+            guard let data = data else {return}
+            print(data)
+        }
     }
 
     // MARK: - Table view data source

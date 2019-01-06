@@ -14,6 +14,8 @@
 		928D55E521E1A8DC005EB326 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 928D55E421E1A8DC005EB326 /* Assets.xcassets */; };
 		928D55E821E1A8DC005EB326 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 928D55E621E1A8DC005EB326 /* LaunchScreen.storyboard */; };
 		928D55F021E1B647005EB326 /* TimeLineTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55EF21E1B647005EB326 /* TimeLineTableVC.swift */; };
+		928D55F621E1B7B6005EB326 /* ApiHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55F521E1B7B6005EB326 /* ApiHandler.swift */; };
+		928D55F921E1E2C9005EB326 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55F821E1E2C9005EB326 /* Article.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		928D55E721E1A8DC005EB326 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		928D55E921E1A8DC005EB326 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		928D55EF21E1B647005EB326 /* TimeLineTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineTableVC.swift; sourceTree = "<group>"; };
+		928D55F521E1B7B6005EB326 /* ApiHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiHandler.swift; sourceTree = "<group>"; };
+		928D55F821E1E2C9005EB326 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,7 +62,8 @@
 		928D55D921E1A8DA005EB326 /* TinkoffTimeLine */ = {
 			isa = PBXGroup;
 			children = (
-				928D55F421E1B712005EB326 /* View */,
+				928D55F721E1E2B1005EB326 /* Models */,
+				928D55F421E1B712005EB326 /* Views */,
 				928D55F321E1B6EE005EB326 /* Handlers */,
 				928D55F221E1B6D6005EB326 /* API */,
 				928D55F121E1B64D005EB326 /* ViewControllers */,
@@ -81,6 +86,7 @@
 		928D55F221E1B6D6005EB326 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				928D55F521E1B7B6005EB326 /* ApiHandler.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -93,14 +99,22 @@
 			path = Handlers;
 			sourceTree = "<group>";
 		};
-		928D55F421E1B712005EB326 /* View */ = {
+		928D55F421E1B712005EB326 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				928D55E621E1A8DC005EB326 /* LaunchScreen.storyboard */,
 				928D55E421E1A8DC005EB326 /* Assets.xcassets */,
 				928D55DE21E1A8DA005EB326 /* Main.storyboard */,
 			);
-			path = View;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		928D55F721E1E2B1005EB326 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				928D55F821E1E2C9005EB326 /* Article.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,6 +190,8 @@
 			files = (
 				928D55DD21E1A8DA005EB326 /* ArticleVC.swift in Sources */,
 				928D55E321E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodeld in Sources */,
+				928D55F921E1E2C9005EB326 /* Article.swift in Sources */,
+				928D55F621E1B7B6005EB326 /* ApiHandler.swift in Sources */,
 				928D55F021E1B647005EB326 /* TimeLineTableVC.swift in Sources */,
 				928D55DB21E1A8DA005EB326 /* AppDelegate.swift in Sources */,
 			);
