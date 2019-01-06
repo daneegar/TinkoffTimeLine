@@ -92,14 +92,11 @@ extension TimeLineTableVC: UITableViewDataSourcePrefetching {
                 self.tableView.insertRows(at: indexes, with: .automatic)
             }
         }
-        
         apiHandler.getList(with: listOfArticles.count, and: 20) { (data, urlResponse, error) in
-            
         }
     }
-    
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        print(indexPaths)
+        
     }
 }
 //MARK: - refresh handler

@@ -41,13 +41,12 @@ struct Article: Codable {
             self.hidden = try valueContainer.decode(Bool.self, forKey: CodingKeys.hidden)
             self.title = try valueContainer.decode(String.self, forKey: CodingKeys.title)
             self.lang = try valueContainer.decode(String.self, forKey: CodingKeys.lang)
-            self.text = try valueContainer.decode(String.self, forKey: CodingKeys.text)
+            self.text = nil
             self.counterOfOpening = nil
             return
             }
         }
-        guard let valueContainer =  try? decoder.container(keyedBy: ResponseKey.self) else { throw ApiErrors.parsError}
-            print(valueContainer.allKeys)
+        guard let valueContainer =  try? decoder.container(keyedBy: ResponseKey.self) else { throw ApiErrors.parsError }
             let nestContainer = try valueContainer.nestedContainer(keyedBy: CodingKeys.self, forKey: .response)
             self.urlSlug = try nestContainer.decode(String.self, forKey: CodingKeys.urlSlug)
             self.date = try nestContainer.decode(String.self, forKey: CodingKeys.date)
@@ -109,12 +108,6 @@ class ApiHandler {
                     completion?(answer, urlResponse ,nil)
                 }
             }
-            if let urlResponse = urlResponse {
-                print(urlResponse)
-            }
-            if let error = error {
-                print(error)
-            }
         }
         task.resume()
     }
@@ -130,12 +123,6 @@ class ApiHandler {
                 DispatchQueue.main.async {
                     completion?(answer, urlResponse ,nil)
                 }
-            }
-            if let urlResponse = urlResponse {
-                print(urlResponse)
-            }
-            if let error = error {
-                print(error)
             }
         }
         task.resume()
