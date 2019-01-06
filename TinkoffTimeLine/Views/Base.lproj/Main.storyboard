@@ -34,14 +34,41 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="M3Y-Bj-Id2">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                            <tableViewCell autoresizesSubviews="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="TheNewCell" rowHeight="72" id="M3Y-Bj-Id2" customClass="TheNewCell" customModule="TinkoffTimeLine" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="72"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="M3Y-Bj-Id2" id="K3E-Xv-FI6">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="M3Y-Bj-Id2" id="K3E-Xv-FI6" customClass="TheNewCell" customModule="TinkoffTimeLine" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="71.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <view contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bud-ss-0ac">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="71.5"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nXg-9N-p6l">
+                                                    <rect key="frame" x="6" y="6" width="363" height="65.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="nXg-9N-p6l" secondAttribute="trailing" constant="6" id="00K-et-8AY"/>
+                                                <constraint firstAttribute="bottom" secondItem="nXg-9N-p6l" secondAttribute="bottom" id="MOt-qI-yM8"/>
+                                                <constraint firstItem="nXg-9N-p6l" firstAttribute="top" secondItem="bud-ss-0ac" secondAttribute="top" constant="6" id="pyW-qC-EPq"/>
+                                                <constraint firstItem="nXg-9N-p6l" firstAttribute="leading" secondItem="bud-ss-0ac" secondAttribute="leading" constant="6" id="sMA-Uk-iB1"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="bud-ss-0ac" firstAttribute="top" secondItem="K3E-Xv-FI6" secondAttribute="top" id="GID-CR-07g"/>
+                                        <constraint firstItem="bud-ss-0ac" firstAttribute="leading" secondItem="K3E-Xv-FI6" secondAttribute="leading" id="fot-9J-xVZ"/>
+                                        <constraint firstAttribute="trailing" secondItem="bud-ss-0ac" secondAttribute="trailing" id="j8Y-Bp-FDm"/>
+                                        <constraint firstAttribute="bottom" secondItem="bud-ss-0ac" secondAttribute="bottom" id="nca-Hp-aTa"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="label" destination="nXg-9N-p6l" id="mhh-5H-XZg"/>
                                     <segue destination="BYZ-38-t0r" kind="show" id="JW8-2w-fNS"/>
                                 </connections>
                             </tableViewCell>

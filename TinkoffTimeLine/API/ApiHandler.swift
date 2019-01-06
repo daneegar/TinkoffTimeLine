@@ -15,6 +15,7 @@ struct Article: Codable {
     let title: String
     let text: String?
     let lang: String
+   
     enum CodingKeys: String, CodingKey {
         case urlSlug = "slug"
         case date = "date"
@@ -95,7 +96,7 @@ class ApiHandler {
                 }
             }
             if let urlResponse = urlResponse {
-                //print(urlResponse)
+                print(urlResponse)
             }
             if let error = error {
                 print(error)
@@ -103,7 +104,32 @@ class ApiHandler {
         }
         task.resume()
     }
+    func getArticle (urlSlug: String, completion: ((Article?, URLResponse?, Error?) -> Void)?){
+        var resultURL = self.ApiHomeUrl
+        resultURL.appendPathComponent("getArticle")
+        resultURL.append("urlSlug", value: urlSlug)
+        
+        let task = URLSession.shared.dataTask(with: resultURL) { (data, urlResponse, error) in
+            let jsonDecoder = JSONDecoder()
+            if let catchedData = data, let answer = try? jsonDecoder.decode(Article.self, from: catchedData)
+            {
+                DispatchQueue.main.async {
+                    completion?(answer, urlResponse ,nil)
+                }
+            }
+            if let urlResponse = urlResponse {
+                print(urlResponse)
+            }
+            if let error = error {
+                print(error)
+            }
+        }
+        task.resume()
+    }
+    
 }
+
+
 
 
 extension URL {
