@@ -8,6 +8,10 @@
 
 import Foundation
 
+enum ApiErrors: Error {
+    case parsError
+}
+
 struct Article: Codable {
     let urlSlug: String
     let date: String
@@ -15,7 +19,11 @@ struct Article: Codable {
     let title: String
     let text: String?
     let lang: String
-   
+    let counterOfOpening: Int?
+    
+    enum ResponseKey: String, CodingKey {
+        case response = "response"
+    }
     enum CodingKeys: String, CodingKey {
         case urlSlug = "slug"
         case date = "date"
@@ -26,21 +34,28 @@ struct Article: Codable {
     }
     
     init(from decoder: Decoder) throws {
-        let valueContainer = try decoder.container(keyedBy: CodingKeys.self)
-        self.urlSlug = try valueContainer.decode(String.self, forKey: CodingKeys.urlSlug)
-        self.date = try valueContainer.decode(String.self, forKey: CodingKeys.date)
-        self.hidden = try valueContainer.decode(Bool.self, forKey: CodingKeys.hidden)
-        self.title = try valueContainer.decode(String.self, forKey: CodingKeys.title)
-        self.lang = try valueContainer.decode(String.self, forKey: CodingKeys.lang)
-        self.text = nil
-    }
-    init(){
-        self.urlSlug = ""
-        self.date = ""
-        self.hidden = true
-        self.title = ""
-        self.text = ""
-        self.lang = ""
+        if let valueContainer =  try? decoder.container(keyedBy: CodingKeys.self) {
+            if valueContainer.allKeys != [] {
+            self.urlSlug = try valueContainer.decode(String.self, forKey: CodingKeys.urlSlug)
+            self.date = try valueContainer.decode(String.self, forKey: CodingKeys.date)
+            self.hidden = try valueContainer.decode(Bool.self, forKey: CodingKeys.hidden)
+            self.title = try valueContainer.decode(String.self, forKey: CodingKeys.title)
+            self.lang = try valueContainer.decode(String.self, forKey: CodingKeys.lang)
+            self.text = try valueContainer.decode(String.self, forKey: CodingKeys.text)
+            self.counterOfOpening = nil
+            return
+            }
+        }
+        guard let valueContainer =  try? decoder.container(keyedBy: ResponseKey.self) else { throw ApiErrors.parsError}
+            print(valueContainer.allKeys)
+            let nestContainer = try valueContainer.nestedContainer(keyedBy: CodingKeys.self, forKey: .response)
+            self.urlSlug = try nestContainer.decode(String.self, forKey: CodingKeys.urlSlug)
+            self.date = try nestContainer.decode(String.self, forKey: CodingKeys.date)
+            self.hidden = try nestContainer.decode(Bool.self, forKey: CodingKeys.hidden)
+            self.title = try nestContainer.decode(String.self, forKey: CodingKeys.title)
+            self.lang = try nestContainer.decode(String.self, forKey: CodingKeys.lang)
+            self.text = try nestContainer.decode(String.self, forKey: CodingKeys.text)
+            self.counterOfOpening = nil
     }
 }
 struct Response: Codable {
@@ -56,7 +71,6 @@ struct Response: Codable {
     }
     init(from decoder: Decoder) throws {
         let valueContainer = try decoder.container(keyedBy: ResponseKey.self)
-        //print(valueContainer.allKeys)
         let nestContainer = try valueContainer.nestedContainer(keyedBy: NestResponseKeys.self, forKey: .response)
         self.total = try nestContainer.decode(Int.self, forKey: NestResponseKeys.total)
         self.articles = try nestContainer.decode(Array<Article>.self, forKey: NestResponseKeys.articles)
@@ -107,7 +121,7 @@ class ApiHandler {
     func getArticle (urlSlug: String, completion: ((Article?, URLResponse?, Error?) -> Void)?){
         var resultURL = self.ApiHomeUrl
         resultURL.appendPathComponent("getArticle")
-        resultURL.append("urlSlug", value: urlSlug)
+        resultURL = resultURL.append("urlSlug", value: urlSlug)
         
         let task = URLSession.shared.dataTask(with: resultURL) { (data, urlResponse, error) in
             let jsonDecoder = JSONDecoder()

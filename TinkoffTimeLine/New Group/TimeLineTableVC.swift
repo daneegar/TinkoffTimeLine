@@ -15,7 +15,6 @@ class TimeLineTableVC: UITableViewController {
 
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         self.tableView.refreshControl = {
             let refreshControl = UIRefreshControl()
             refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: UIControl.Event.valueChanged)
@@ -31,6 +30,7 @@ class TimeLineTableVC: UITableViewController {
             guard let data = data else {return}
             self.updateTimeLineWithNews(with: data.articles, totalNews: data.total)
         }
+        super.viewDidLoad()
     }
     
     //MARK: - tableview Methods
@@ -38,7 +38,6 @@ class TimeLineTableVC: UITableViewController {
         return self.listOfArticles.count
     }
 
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TheNewCell", for: indexPath) as! TheNewCell
         //TODO: - handl the error
@@ -86,7 +85,6 @@ extension TimeLineTableVC: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         let apiHandler = ApiHandler()
         if (indexPaths.last?.row)! >= listOfArticles.count - 3 {
-            
             apiHandler.getList(with: listOfArticles.count, and: 20) { (data, response, error) in
                 guard let data = data else { return }
                 let indexes = self.indexPathsForInsert(fromIndex: self.listOfArticles.count, count: data.articles.count)
@@ -104,7 +102,7 @@ extension TimeLineTableVC: UITableViewDataSourcePrefetching {
         print(indexPaths)
     }
 }
-
+//MARK: - refresh handler
 extension TimeLineTableVC {
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         let apiHandler = ApiHandler()
@@ -115,6 +113,21 @@ extension TimeLineTableVC {
             }
             self.updateTimeLineWithNews(with: data.articles, totalNews: data.total)
             refreshControl.endRefreshing()
+        }
+        
+    }
+}
+
+//MARK: - navigation methods
+extension TimeLineTableVC {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toArticle" {
+            let articleVC = segue.destination as! ArticleVC
+            let selectedIndexPath = self.tableView.indexPathForSelectedRow
+            let selectedArticle = self.listOfArticles[(selectedIndexPath?.row)!]
+            articleVC.article = selectedArticle
+            self.tableView.deselectRow(at: selectedIndexPath!, animated: true)
+            
         }
         
     }
