@@ -15,29 +15,35 @@ class ArticleVC: UIViewController {
     var article: Article? = nil
     
     override func viewDidLoad() {
-        self.getArticle()
         articleText.alpha = 0
         articleText.isEditable = false
-        
+        self.getArticle()
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
     func getArticle(){
-        guard let urlSlug = self.article?.urlSlug else {return}
-        let apiHandler = ApiHandler()
-        apiHandler.getArticle(urlSlug: urlSlug) { (article, response, error) in
-            guard let article = article else {return}
-            self.articleText.text = article.text!.htmlToString
-            UIView.animate(withDuration: 0.2) {
-                self.articleText.alpha = 1
+        if let text = article?.text {
+            showText(text)
+        } else {
+            guard let urlSlug = self.article?.urlSlug else {return}
+            let apiHandler = ApiHandler()
+            apiHandler.getArticle(urlSlug: urlSlug) { (article, response, error) in
+                guard let article = article else {return}
+                self.article?.text = article.text
+                self.showText(article.text)
             }
         }
     }
-
+    func showText(_ text: String?) {
+        guard let text = text else {return}
+        self.articleText.text = text.htmlToString
+        UIView.animate(withDuration: 0.2) {
+            self.articleText.alpha = 1
+        }
+    }
 
 }
-
-
+//MARK: - html to normal string extension of String
     extension String {
         var htmlToAttributedString: NSAttributedString? {
             guard let data = data(using: .utf8) else { return NSAttributedString() }

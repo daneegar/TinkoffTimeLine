@@ -16,9 +16,6 @@ class TimeLineTableVC: UITableViewController {
     
     lazy var dataBase = DataBase(context: self.context)
     
-    
-
-    
     override func viewDidLoad() {
         self.tableView.refreshControl = {
             let refreshControl = UIRefreshControl()
@@ -31,17 +28,23 @@ class TimeLineTableVC: UITableViewController {
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 200
         self.tableView.prefetchDataSource = self
-        
-//        let apiHandler = ApiHandler()
-//        apiHandler.getList(with: nil, and: nil) { (data, response, error) in
-//            guard let data = data else {return}
-//            self.updateTimeLineWithNews(with: data)
-//            self.setData()
-//        }
         preLoader()
         super.viewDidLoad()
     }
     
+    //MARK: - init
+    func preLoader() {
+        if readData() {
+            tableView.reloadData()
+        } else {
+            let apiHandler = ApiHandler()
+            apiHandler.getList(with: nil, and: nil) { (data, response, error) in
+                guard let data = data else {return}
+                self.updateTimeLineWithNews(with: data)
+                self.setData()
+            }
+        }
+    }
 
     
     //MARK: - tableview Methods
@@ -59,6 +62,7 @@ class TimeLineTableVC: UITableViewController {
                 let newListOfArticles = data.articles.map {Article.init(fromResponse: $0, insertIntoManagesObjectContext: self.context)}
                 self.listOfArticles = self.listOfArticles + newListOfArticles
                 self.tableView.insertRows(at: indexes, with: .automatic)
+                self.setData()
             }
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "TheNewCell", for: indexPath) as! TheNewCell
@@ -124,7 +128,7 @@ extension TimeLineTableVC {
             self.updateTimeLineWithNews(with: data)
             refreshControl.endRefreshing()
         }
-        
+        setData()
     }
 }
 
@@ -134,24 +138,23 @@ extension TimeLineTableVC {
         if segue.identifier == "toArticle" {
             let articleVC = segue.destination as! ArticleVC
             let selectedIndexPath = self.tableView.indexPathForSelectedRow
-            let selectedArticle = self.listOfArticles[(selectedIndexPath?.row)!]
-            articleVC.article = selectedArticle
+            articleVC.article = self.listOfArticles[(selectedIndexPath?.row)!]
             self.tableView.deselectRow(at: selectedIndexPath!, animated: true)
-            
         }
-        
     }
 }
 //MARK: - CoreData CRUD methods
 extension TimeLineTableVC {
     func readData(wia request: NSFetchRequest<DataBase> = DataBase.fetchRequest()) -> Bool{
-        //let request: NSFetchRequest<Item> = Item.fetchRequest()
         do {
             let data = try context.fetch(request)
             if !data.isEmpty {
                 dataBase = data.first!
                 listOfArticles = Array((dataBase.listOfArticles)!) as! [Article]
                 currentQuanityOfArticles = Int(dataBase.currentQuanityOfArticles)
+                print("readData")
+                print(listOfArticles.count)
+                
                 return true
             }
         } catch {
@@ -161,30 +164,37 @@ extension TimeLineTableVC {
         return false
     }
     
-    func setData (){
+    func setData () -> Bool{
         do{
-            
-            let _ = self.listOfArticles.map {self.dataBase.addToListOfArticles($0)}
-            self.dataBase.currentQuanityOfArticles = Int32(self.currentQuanityOfArticles!)
-            try context.save()
-            print(dataBase)
-            
+            if clearBase() {
+                let _ = self.listOfArticles.map {self.dataBase.addToListOfArticles($0)}
+                self.dataBase.currentQuanityOfArticles = Int32(self.currentQuanityOfArticles!)
+                try context.save()
+                print("setData")
+                print(self.dataBase.listOfArticles?.count)
+                print(self.listOfArticles.count)
+                print(self.dataBase.currentQuanityOfArticles)
+            }
         } catch{
             print ("setting data error, \(error)")
+            return false
         }
+        return true
     }
     
-    func preLoader() {
-        if readData() {
-            tableView.reloadData()
-        } else {
-                    let apiHandler = ApiHandler()
-                    apiHandler.getList(with: nil, and: nil) { (data, response, error) in
-                        guard let data = data else {return}
-                        self.updateTimeLineWithNews(with: data)
-                        self.setData()
-                    }
+    func clearBase () -> Bool {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DataBase")
+        fetchRequest.includesPropertyValues = false
+        do {
+            let items = try context.fetch(fetchRequest) as! [DataBase]
+            for item in items {
+                item.listOfArticles = []
+            }
+        } catch {
+            print(error)
+            return false
         }
+    return true
     }
     
 }
