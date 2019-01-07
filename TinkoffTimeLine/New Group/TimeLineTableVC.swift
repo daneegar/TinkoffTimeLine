@@ -13,7 +13,6 @@ class TimeLineTableVC: UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var listOfArticles: [Article] = [Article]()
     var currentQuanityOfArticles: Int?
-    
     lazy var dataBase = DataBase(context: self.context)
     
     override func viewDidLoad() {
@@ -91,8 +90,16 @@ class TimeLineTableVC: UITableViewController {
             self.currentQuanityOfArticles = response.total
             self.tableView.insertRows(at: indexPaths, with: .automatic)
         }
-        
     }
+    
+    func setCountOfArticle (indexPath: IndexPath)
+    {
+        tableView.beginUpdates()
+        tableView.reloadRows(at: [indexPath], with: .none)
+        tableView.endUpdates()
+        updateBase()
+    }
+    
 
     
     func indexPathsForInsert(fromIndex index: Int, count: Int) -> [IndexPath] {
@@ -139,6 +146,8 @@ extension TimeLineTableVC {
             let articleVC = segue.destination as! ArticleVC
             let selectedIndexPath = self.tableView.indexPathForSelectedRow
             articleVC.article = self.listOfArticles[(selectedIndexPath?.row)!]
+            articleVC.indexPath = selectedIndexPath
+            articleVC.mainView = self
             self.tableView.deselectRow(at: selectedIndexPath!, animated: true)
         }
     }
@@ -167,6 +176,7 @@ extension TimeLineTableVC {
     func setData () -> Bool{
         do{
             if clearBase() {
+
                 let _ = self.listOfArticles.map {self.dataBase.addToListOfArticles($0)}
                 self.dataBase.currentQuanityOfArticles = Int32(self.currentQuanityOfArticles!)
                 try context.save()
@@ -197,4 +207,13 @@ extension TimeLineTableVC {
     return true
     }
     
+    func updateBase (){
+        do {
+            
+            try context.save()
+        }
+        catch {
+            print(error)
+        }
+    }
 }

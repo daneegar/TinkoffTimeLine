@@ -11,7 +11,8 @@ import UIKit
 class ArticleVC: UIViewController {
 
     @IBOutlet weak var articleText: UITextView!
-    
+    var indexPath: IndexPath?
+    var mainView: TimeLineTableVC?
     var article: Article? = nil
     
     override func viewDidLoad() {
@@ -40,6 +41,8 @@ class ArticleVC: UIViewController {
         UIView.animate(withDuration: 0.2) {
             self.articleText.alpha = 1
         }
+        self.article?.readCounter += 1
+        mainView?.setCountOfArticle(indexPath: indexPath!)
     }
 
 }

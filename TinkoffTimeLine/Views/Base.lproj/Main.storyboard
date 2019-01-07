@@ -62,7 +62,7 @@
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Qw-FR-RYB">
                                             <rect key="frame" x="20" y="15" width="335" height="28"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X0e-FP-CQ7">
+                                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X0e-FP-CQ7">
                                                     <rect key="frame" x="300.5" y="8" width="26.5" height="12"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="26.5" id="eTM-JZ-KQe"/>
@@ -100,6 +100,7 @@
                                 <connections>
                                     <outlet property="bodyOfCell" destination="0Qw-FR-RYB" id="Vgs-nC-isw"/>
                                     <outlet property="label" destination="ccp-wF-xec" id="s8J-eh-uZA"/>
+                                    <outlet property="readCounter" destination="X0e-FP-CQ7" id="xJq-dQ-M6e"/>
                                     <segue destination="BYZ-38-t0r" kind="show" identifier="toArticle" id="1vw-ai-l7B"/>
                                 </connections>
                             </tableViewCell>

@@ -13,10 +13,16 @@ class TheNewCell: UITableViewCell {
     @IBOutlet weak var bodyOfCell: UIView!
     
     @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var readCounter: UILabel!
     
 
     func comleteSelf(withArticle article: Article){
-        self.label.text = article.title
+        label.text = article.title
+        if article.readCounter != 0 {
+            readCounter.text = String(article.readCounter)
+        } else {
+            readCounter.text = ""
+        }
         self.bodyOfCell.layer.cornerRadius = CGFloat(integerLiteral: 10)
     }
     
