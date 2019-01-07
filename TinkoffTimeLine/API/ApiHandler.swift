@@ -12,7 +12,7 @@ enum ApiErrors: Error {
     case parsError
 }
 
-struct Article: Codable {
+struct ArticleResponse: Codable {
     let urlSlug: String
     let date: String
     let hidden: Bool
@@ -60,7 +60,7 @@ struct Article: Codable {
 struct Response: Codable {
     let response: String
     let total: Int
-    let articles: [Article]
+    let articles: [ArticleResponse]
     enum ResponseKey: String, CodingKey {
         case response = "response"
     }
@@ -72,7 +72,7 @@ struct Response: Codable {
         let valueContainer = try decoder.container(keyedBy: ResponseKey.self)
         let nestContainer = try valueContainer.nestedContainer(keyedBy: NestResponseKeys.self, forKey: .response)
         self.total = try nestContainer.decode(Int.self, forKey: NestResponseKeys.total)
-        self.articles = try nestContainer.decode(Array<Article>.self, forKey: NestResponseKeys.articles)
+        self.articles = try nestContainer.decode(Array<ArticleResponse>.self, forKey: NestResponseKeys.articles)
         //print(nestContainer.allKeys)
         self.response = ""
     }
@@ -111,14 +111,14 @@ class ApiHandler {
         }
         task.resume()
     }
-    func getArticle (urlSlug: String, completion: ((Article?, URLResponse?, Error?) -> Void)?){
+    func getArticle (urlSlug: String, completion: ((ArticleResponse?, URLResponse?, Error?) -> Void)?){
         var resultURL = self.ApiHomeUrl
         resultURL.appendPathComponent("getArticle")
         resultURL = resultURL.append("urlSlug", value: urlSlug)
         
         let task = URLSession.shared.dataTask(with: resultURL) { (data, urlResponse, error) in
             let jsonDecoder = JSONDecoder()
-            if let catchedData = data, let answer = try? jsonDecoder.decode(Article.self, from: catchedData)
+            if let catchedData = data, let answer = try? jsonDecoder.decode(ArticleResponse.self, from: catchedData)
             {
                 DispatchQueue.main.async {
                     completion?(answer, urlResponse ,nil)

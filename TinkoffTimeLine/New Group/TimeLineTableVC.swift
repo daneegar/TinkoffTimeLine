@@ -7,10 +7,14 @@
 //
 
 import UIKit
+import CoreData
 
 class TimeLineTableVC: UITableViewController {
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var listOfArticles: [Article] = [Article]()
     var currentQuanityOfArticles: Int?
+    lazy var dataBase = DataBase(context: self.context)
+    
     
 
     
@@ -23,50 +27,67 @@ class TimeLineTableVC: UITableViewController {
         }()
         self.tableView.addSubview(self.refreshControl!)
         self.tableView.rowHeight = UITableView.automaticDimension
-        self.tableView.estimatedRowHeight = 200
+        tableView.separatorStyle = .none
+        tableView.estimatedRowHeight = 200
         self.tableView.prefetchDataSource = self
         let apiHandler = ApiHandler()
         apiHandler.getList(with: nil, and: nil) { (data, response, error) in
             guard let data = data else {return}
-            self.updateTimeLineWithNews(with: data.articles, totalNews: data.total)
+            self.updateTimeLineWithNews(with: data)
         }
         super.viewDidLoad()
     }
+    
+
     
     //MARK: - tableview Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.listOfArticles.count
     }
 
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row == listOfArticles.count - 1{
+            let apiHandler = ApiHandler()
+            apiHandler.getList(with: listOfArticles.count, and: 20) { (data, response, error) in
+                guard let data = data else { return }
+                let indexes = self.indexPathsForInsert(fromIndex: self.listOfArticles.count, count: data.articles.count)
+                let newListOfArticles = data.articles.map {Article.init(fromResponse: $0, insertIntoManagesObjectContext: self.context)}
+                self.listOfArticles = self.listOfArticles + newListOfArticles
+                self.tableView.insertRows(at: indexes, with: .automatic)
+            }
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "TheNewCell", for: indexPath) as! TheNewCell
         //TODO: - handl the error
-        cell.comliteSelf(withArticle: listOfArticles[indexPath.row])
+        print (indexPath)
+        print (listOfArticles.count)
+        cell.comleteSelf(withArticle: listOfArticles[indexPath.row])
         return cell
     }
     
     //MARK: - update newsline methods
-    func updateTimeLineWithNews (with articles: [Article], totalNews: Int) {
+    func updateTimeLineWithNews (with response: Response) {
         var indexPaths: [IndexPath]
         guard let currentQuanity = self.currentQuanityOfArticles else {
-            indexPaths = indexPathsForInsert(fromIndex: 0, count: articles.count)
-            self.listOfArticles = articles
+            indexPaths = indexPathsForInsert(fromIndex: 0, count: response.articles.count)
+            self.listOfArticles = response.articles.map {Article.init(fromResponse: $0, insertIntoManagesObjectContext: self.context)}
             self.tableView.insertRows(at: indexPaths, with: .automatic)
-            self.currentQuanityOfArticles = totalNews
+            self.currentQuanityOfArticles = response.total
             return
         }
-        if currentQuanity < totalNews {
-            var quanityNewsToInsert = totalNews - currentQuanity
+        if currentQuanity < response.total {
+            var quanityNewsToInsert = response.total - currentQuanity
             while quanityNewsToInsert != 0 {
-                self.listOfArticles.insert(articles[quanityNewsToInsert - 1], at: 0)
+                self.listOfArticles.insert(Article.init(fromResponse: response.articles[quanityNewsToInsert - 1], insertIntoManagesObjectContext: self.context), at: 0)
                 quanityNewsToInsert -= 1
             }
             indexPaths = indexPathsForInsert(fromIndex: 0, count: quanityNewsToInsert)
-            self.currentQuanityOfArticles = totalNews
+            self.currentQuanityOfArticles = response.total
             self.tableView.insertRows(at: indexPaths, with: .automatic)
         }
         
     }
+
     
     func indexPathsForInsert(fromIndex index: Int, count: Int) -> [IndexPath] {
         var resultIndexPath: [IndexPath] = []
@@ -83,17 +104,7 @@ class TimeLineTableVC: UITableViewController {
 //MARK: - prefetching methods
 extension TimeLineTableVC: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        let apiHandler = ApiHandler()
-        if (indexPaths.last?.row)! >= listOfArticles.count - 3 {
-            apiHandler.getList(with: listOfArticles.count, and: 20) { (data, response, error) in
-                guard let data = data else { return }
-                let indexes = self.indexPathsForInsert(fromIndex: self.listOfArticles.count, count: data.articles.count)
-                self.listOfArticles = self.listOfArticles + data.articles
-                self.tableView.insertRows(at: indexes, with: .automatic)
-            }
-        }
-        apiHandler.getList(with: listOfArticles.count, and: 20) { (data, urlResponse, error) in
-        }
+
     }
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         
@@ -108,7 +119,7 @@ extension TimeLineTableVC {
                 refreshControl.endRefreshing()
                 return
             }
-            self.updateTimeLineWithNews(with: data.articles, totalNews: data.total)
+            self.updateTimeLineWithNews(with: data)
             refreshControl.endRefreshing()
         }
         
@@ -127,5 +138,25 @@ extension TimeLineTableVC {
             
         }
         
+    }
+}
+//MARK: - CoreData CRUD methods
+extension TimeLineTableVC {
+    func readData(wia request: NSFetchRequest<DataBase> = DataBase.fetchRequest()){
+        //let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            self.dataBase = try context.fetch(request)[0]
+        } catch {
+            print("loading data error, \(error)")
+        }
+        tableView.reloadData()
+    }
+    
+    func setData (){
+        do{
+            try context.save()
+        } catch{
+            print ("setting data error, \(error)")
+        }
     }
 }

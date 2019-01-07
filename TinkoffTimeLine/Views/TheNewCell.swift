@@ -10,20 +10,15 @@ import UIKit
 
 class TheNewCell: UITableViewCell {
 
-
+    @IBOutlet weak var bodyOfCell: UIView!
+    
     @IBOutlet weak var label: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    func comliteSelf(withArticle article: Article){
+    func comleteSelf(withArticle article: Article){
         self.label.text = article.title
-        self.label.sizeToFit()
-        self.layoutIfNeeded()
+        self.bodyOfCell.layer.cornerRadius = CGFloat(integerLiteral: 10)
     }
+    
+
 }
