@@ -13,6 +13,7 @@ class TimeLineTableVC: UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var listOfArticles: [Article] = [Article]()
     var currentQuanityOfArticles: Int?
+    
     lazy var dataBase = DataBase(context: self.context)
     
     
@@ -30,11 +31,14 @@ class TimeLineTableVC: UITableViewController {
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 200
         self.tableView.prefetchDataSource = self
-        let apiHandler = ApiHandler()
-        apiHandler.getList(with: nil, and: nil) { (data, response, error) in
-            guard let data = data else {return}
-            self.updateTimeLineWithNews(with: data)
-        }
+        
+//        let apiHandler = ApiHandler()
+//        apiHandler.getList(with: nil, and: nil) { (data, response, error) in
+//            guard let data = data else {return}
+//            self.updateTimeLineWithNews(with: data)
+//            self.setData()
+//        }
+        preLoader()
         super.viewDidLoad()
     }
     
@@ -59,8 +63,6 @@ class TimeLineTableVC: UITableViewController {
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "TheNewCell", for: indexPath) as! TheNewCell
         //TODO: - handl the error
-        print (indexPath)
-        print (listOfArticles.count)
         cell.comleteSelf(withArticle: listOfArticles[indexPath.row])
         return cell
     }
@@ -142,21 +144,47 @@ extension TimeLineTableVC {
 }
 //MARK: - CoreData CRUD methods
 extension TimeLineTableVC {
-    func readData(wia request: NSFetchRequest<DataBase> = DataBase.fetchRequest()){
+    func readData(wia request: NSFetchRequest<DataBase> = DataBase.fetchRequest()) -> Bool{
         //let request: NSFetchRequest<Item> = Item.fetchRequest()
         do {
-            self.dataBase = try context.fetch(request)[0]
+            let data = try context.fetch(request)
+            if !data.isEmpty {
+                dataBase = data.first!
+                listOfArticles = Array((dataBase.listOfArticles)!) as! [Article]
+                currentQuanityOfArticles = Int(dataBase.currentQuanityOfArticles)
+                return true
+            }
         } catch {
             print("loading data error, \(error)")
+            return false
         }
-        tableView.reloadData()
+        return false
     }
     
     func setData (){
         do{
+            
+            let _ = self.listOfArticles.map {self.dataBase.addToListOfArticles($0)}
+            self.dataBase.currentQuanityOfArticles = Int32(self.currentQuanityOfArticles!)
             try context.save()
+            print(dataBase)
+            
         } catch{
             print ("setting data error, \(error)")
         }
     }
+    
+    func preLoader() {
+        if readData() {
+            tableView.reloadData()
+        } else {
+                    let apiHandler = ApiHandler()
+                    apiHandler.getList(with: nil, and: nil) { (data, response, error) in
+                        guard let data = data else {return}
+                        self.updateTimeLineWithNews(with: data)
+                        self.setData()
+                    }
+        }
+    }
+    
 }
