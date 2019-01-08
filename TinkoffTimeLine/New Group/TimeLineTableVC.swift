@@ -16,17 +16,8 @@ class TimeLineTableVC: UITableViewController {
     lazy var dataBase = DataBase(context: self.context)
     
     override func viewDidLoad() {
-        self.tableView.refreshControl = {
-            let refreshControl = UIRefreshControl()
-            refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: UIControl.Event.valueChanged)
-            refreshControl.tintColor = UIColor.red
-            return refreshControl
-        }()
-        self.tableView.addSubview(self.refreshControl!)
-        self.tableView.rowHeight = UITableView.automaticDimension
-        tableView.separatorStyle = .none
-        tableView.estimatedRowHeight = 200
-        self.tableView.prefetchDataSource = self
+        setRefreshHandler()
+        customizing()
         preLoader()
         super.viewDidLoad()
     }
@@ -43,6 +34,13 @@ class TimeLineTableVC: UITableViewController {
                 self.setData()
             }
         }
+    }
+    
+    func customizing() {
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.separatorStyle = .none
+        tableView.estimatedRowHeight = 200
+        tableView.prefetchDataSource = self
     }
 
     
@@ -65,7 +63,7 @@ class TimeLineTableVC: UITableViewController {
             }
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "TheNewCell", for: indexPath) as! TheNewCell
-        //TODO: - handl the error
+        //TODO: - handle the error
         cell.comleteSelf(withArticle: listOfArticles[indexPath.row])
         return cell
     }
@@ -137,7 +135,18 @@ extension TimeLineTableVC {
         }
         setData()
     }
+    
+    func setRefreshHandler(){
+        tableView.refreshControl = {
+            let refreshControl = UIRefreshControl()
+            refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: UIControl.Event.valueChanged)
+            refreshControl.tintColor = UIColor.yellow
+            return refreshControl
+        }()
+        tableView.addSubview(self.refreshControl!)
+    }
 }
+
 
 //MARK: - navigation methods
 extension TimeLineTableVC {
@@ -152,6 +161,7 @@ extension TimeLineTableVC {
         }
     }
 }
+
 //MARK: - CoreData CRUD methods
 extension TimeLineTableVC {
     func readData(wia request: NSFetchRequest<DataBase> = DataBase.fetchRequest()) -> Bool{
@@ -161,9 +171,6 @@ extension TimeLineTableVC {
                 dataBase = data.first!
                 listOfArticles = Array((dataBase.listOfArticles)!) as! [Article]
                 currentQuanityOfArticles = Int(dataBase.currentQuanityOfArticles)
-                print("readData")
-                print(listOfArticles.count)
-                
                 return true
             }
         } catch {
@@ -173,23 +180,16 @@ extension TimeLineTableVC {
         return false
     }
     
-    func setData () -> Bool{
+    func setData (){
         do{
             if clearBase() {
-
                 let _ = self.listOfArticles.map {self.dataBase.addToListOfArticles($0)}
                 self.dataBase.currentQuanityOfArticles = Int32(self.currentQuanityOfArticles!)
                 try context.save()
-                print("setData")
-                print(self.dataBase.listOfArticles?.count)
-                print(self.listOfArticles.count)
-                print(self.dataBase.currentQuanityOfArticles)
             }
         } catch{
             print ("setting data error, \(error)")
-            return false
         }
-        return true
     }
     
     func clearBase () -> Bool {
@@ -209,7 +209,6 @@ extension TimeLineTableVC {
     
     func updateBase (){
         do {
-            
             try context.save()
         }
         catch {

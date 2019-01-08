@@ -20,7 +20,6 @@ class ArticleVC: UIViewController {
         articleText.isEditable = false
         self.getArticle()
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     func getArticle(){
         if let text = article?.text {
