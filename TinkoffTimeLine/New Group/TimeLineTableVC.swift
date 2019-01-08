@@ -8,12 +8,15 @@
 
 import UIKit
 import CoreData
+import Network
 
 class TimeLineTableVC: UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var listOfArticles: [Article] = [Article]()
     var currentQuanityOfArticles: Int?
     lazy var dataBase = DataBase(context: self.context)
+    let monitor = NWPathMonitor()
+    
     
     override func viewDidLoad() {
         setRefreshHandler()
@@ -41,7 +44,13 @@ class TimeLineTableVC: UITableViewController {
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 200
         tableView.prefetchDataSource = self
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                print("Connected")
+            }
+        }
     }
+
 
     
     //MARK: - tableview Methods
@@ -54,12 +63,18 @@ class TimeLineTableVC: UITableViewController {
         if indexPath.row == listOfArticles.count - 1{
             let apiHandler = ApiHandler()
             apiHandler.getList(with: listOfArticles.count, and: 20) { (data, response, error) in
-                guard let data = data else { return }
-                let indexes = self.indexPathsForInsert(fromIndex: self.listOfArticles.count, count: data.articles.count)
-                let newListOfArticles = data.articles.map {Article.init(fromResponse: $0, insertIntoManagesObjectContext: self.context)}
-                self.listOfArticles = self.listOfArticles + newListOfArticles
-                self.tableView.insertRows(at: indexes, with: .automatic)
-                self.setData()
+                if let data = data{
+                    let indexes = self.indexPathsForInsert(fromIndex: self.listOfArticles.count, count: data.articles.count)
+                    let newListOfArticles = data.articles.map {Article.init(fromResponse: $0, insertIntoManagesObjectContext: self.context)}
+                    self.listOfArticles = self.listOfArticles + newListOfArticles
+                    self.tableView.insertRows(at: indexes, with: .automatic)
+                    self.setData()
+                }
+                if let error = error as? errors {
+                    PopUpError.showAnAllert(type: error, sender: self)
+                } else if let error = error {
+                    print (error)
+                }
             }
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "TheNewCell", for: indexPath) as! TheNewCell
@@ -76,6 +91,7 @@ class TimeLineTableVC: UITableViewController {
             self.listOfArticles = response.articles.map {Article.init(fromResponse: $0, insertIntoManagesObjectContext: self.context)}
             self.tableView.insertRows(at: indexPaths, with: .automatic)
             self.currentQuanityOfArticles = response.total
+            tableView.scrollToRow(at: indexPaths.first!, at: UITableView.ScrollPosition(rawValue: indexPaths.first!.row)!, animated: true)
             return
         }
         if currentQuanity < response.total {
@@ -126,11 +142,15 @@ extension TimeLineTableVC {
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         let apiHandler = ApiHandler()
         apiHandler.getList(with: 0, and: 20) { (data, response, error) in
-            guard let data = data else {
-                refreshControl.endRefreshing()
-                return
+            if let data = data {
+                self.updateTimeLineWithNews(with: data)
             }
-            self.updateTimeLineWithNews(with: data)
+            if let error = error as? errors {
+                refreshControl.endRefreshing()
+                PopUpError.showAnAllert(type: error, sender: self)
+            } else if let error = error {
+                print (error)
+            }
             refreshControl.endRefreshing()
         }
         setData()
@@ -174,7 +194,7 @@ extension TimeLineTableVC {
                 return true
             }
         } catch {
-            print("loading data error, \(error)")
+            PopUpError.showAnAllert(type: .reading, sender: self)
             return false
         }
         return false
@@ -188,6 +208,7 @@ extension TimeLineTableVC {
                 try context.save()
             }
         } catch{
+            PopUpError.showAnAllert(type: .saving, sender: self)
             print ("setting data error, \(error)")
         }
     }
@@ -201,7 +222,8 @@ extension TimeLineTableVC {
                 item.listOfArticles = []
             }
         } catch {
-            print(error)
+            PopUpError.showAnAllert(type: .saving, sender: self)
+            print()
             return false
         }
     return true
@@ -212,6 +234,7 @@ extension TimeLineTableVC {
             try context.save()
         }
         catch {
+            PopUpError.showAnAllert(type: .saving, sender: self)
             print(error)
         }
     }

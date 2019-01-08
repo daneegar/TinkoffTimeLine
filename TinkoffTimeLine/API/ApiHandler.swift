@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SystemConfiguration
 
 enum ApiErrors: Error {
     case parsError
@@ -87,6 +88,7 @@ class ApiHandler {
         self.ApiHomeUrl = URL(string: self.stringUrl)!
     }
     func getList (with pageOffSet: Int?, and inQuanity: Int?, completion: ((Response?, URLResponse?, Error?) -> Void)?){
+        if checkConnection() == errors.connection {completion?(nil,nil, errors.connection)}
         var resultURL = self.ApiHomeUrl
         resultURL.appendPathComponent("getArticles")
         if let pageOffSet = pageOffSet {
@@ -105,16 +107,18 @@ class ApiHandler {
             if let catchedData = data, let answer = try? jsonDecoder.decode(Response.self, from: catchedData)
             {
                 DispatchQueue.main.async {
-                    completion?(answer, urlResponse ,nil)
+                    completion?(answer, urlResponse , error)
                 }
             }
         }
         task.resume()
     }
     func getArticle (urlSlug: String, completion: ((ArticleResponse?, URLResponse?, Error?) -> Void)?){
+        if checkConnection() == errors.connection {completion?(nil,nil, errors.connection)}
         var resultURL = self.ApiHomeUrl
         resultURL.appendPathComponent("getArticle")
         resultURL = resultURL.append("urlSlug", value: urlSlug)
+
         
         let task = URLSession.shared.dataTask(with: resultURL) { (data, urlResponse, error) in
             let jsonDecoder = JSONDecoder()
@@ -126,6 +130,15 @@ class ApiHandler {
             }
         }
         task.resume()
+    }
+    
+    func checkConnection () -> errors? {
+        let isConnetion: Reachability = Reachability()
+        if !isConnetion.isConnectedToNetwork() {
+            return errors.connection
+        } else {
+            return nil
+        }
     }
     
 }
@@ -155,5 +168,34 @@ extension URL {
         
         // returns the url from new url components
         return urlComponents.url!
+    }
+}
+
+class Reachability {
+    public func isConnectedToNetwork() -> Bool {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+                SCNetworkReachabilityCreateWithAddress(nil, $0)
+            }
+        }) else {
+            return false
+        }
+        
+        var flags: SCNetworkReachabilityFlags = []
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
+            return false
+        }
+        if flags.isEmpty {
+            return false
+        }
+        
+        let isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
+        
+        return (isReachable && !needsConnection)
     }
 }

@@ -28,9 +28,16 @@ class ArticleVC: UIViewController {
             guard let urlSlug = self.article?.urlSlug else {return}
             let apiHandler = ApiHandler()
             apiHandler.getArticle(urlSlug: urlSlug) { (article, response, error) in
-                guard let article = article else {return}
-                self.article?.text = article.text
-                self.showText(article.text)
+                if let article = article {
+                    self.article?.text = article.text
+                    self.showText(article.text)
+                }
+                if let error = error as? errors {
+                    PopUpError.showAnAllert(type: error, sender: self)
+                    return
+                } else if let error = error {
+                    print (error)
+                }
             }
         }
     }

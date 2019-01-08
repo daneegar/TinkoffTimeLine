@@ -17,6 +17,7 @@
 		928D55F621E1B7B6005EB326 /* ApiHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55F521E1B7B6005EB326 /* ApiHandler.swift */; };
 		928D55F921E1E2C9005EB326 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55F821E1E2C9005EB326 /* Article.swift */; };
 		928D55FD21E1E855005EB326 /* TheNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928D55FC21E1E855005EB326 /* TheNewCell.swift */; };
+		929BC1C121E51387001728D6 /* errorsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 929BC1C021E51387001728D6 /* errorsHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		928D55F821E1E2C9005EB326 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 		928D55FC21E1E855005EB326 /* TheNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheNewCell.swift; sourceTree = "<group>"; };
 		929BC1BF21E5050B001728D6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		929BC1C021E51387001728D6 /* errorsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = errorsHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				928D55DA21E1A8DA005EB326 /* AppDelegate.swift */,
+				929BC1C021E51387001728D6 /* errorsHandler.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -193,6 +196,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				928D55DD21E1A8DA005EB326 /* ArticleVC.swift in Sources */,
+				929BC1C121E51387001728D6 /* errorsHandler.swift in Sources */,
 				928D55FD21E1E855005EB326 /* TheNewCell.swift in Sources */,
 				928D55E321E1A8DA005EB326 /* TinkoffTimeLine.xcdatamodeld in Sources */,
 				928D55F921E1E2C9005EB326 /* Article.swift in Sources */,
